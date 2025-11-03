@@ -44,26 +44,31 @@ func NewClog(logDir string) (*Clog, error) {
 
 func (c *Clog) initTopics() (err error) {
 	fis, err := ioutil.ReadDir(c.LogDir)
+
 	if err != nil {
 		return errors.Wrap(err, "directory read failed")
 	}
+
 	for _, fi := range fis {
 		if !fi.IsDir() {
 			continue
 		}
+
 		if err = c.initTopic(fi.Name()); err != nil {
 			break
 		}
 	}
+
 	return err
 }
 
 type TopicConfig struct {
 }
 
-func (c *Clog) initTopic(name string) (err error) {
+func (c *Clog) initTopic(name string) error {
 	topicPath := filepath.Join(c.LogDir, name)
 	configPath := filepath.Join(topicPath, configFile)
+
 	f, err := os.OpenFile(configPath, os.O_RDWR, 0666)
 	if err != nil {
 		return errors.Wrap(err, "file open failed")
@@ -85,21 +90,16 @@ func (c *Clog) initTopic(name string) (err error) {
 type Topic struct {
 	name   string
 	config TopicConfig
-	log    *log.Logger
+	log    *Log
 	writer io.Writer
 }
 
 func newTopic(config TopicConfig) *Topic {
-	return &Topic{
-		name:   "default",
-		config: config,
-		log:    log.New(os.Stdout, "", log.LstdFlags),
-		writer: io.Discard,
-	}
+	return &Topic{}
 }
 
 func (c *Clog) register(name string, topic *Topic) error {
-	return nil
+
 }
 
 func main() {
