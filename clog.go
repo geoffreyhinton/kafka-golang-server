@@ -85,12 +85,17 @@ func (c *Clog) initTopic(name string) (err error) {
 type Topic struct {
 	name   string
 	config TopicConfig
-	log    *Log
+	log    *log.Logger
 	writer io.Writer
 }
 
 func newTopic(config TopicConfig) *Topic {
-	return &Topic{}
+	return &Topic{
+		name:   "default",
+		config: config,
+		log:    log.New(os.Stdout, "", log.LstdFlags),
+		writer: io.Discard,
+	}
 }
 
 func (c *Clog) register(name string, topic *Topic) error {
